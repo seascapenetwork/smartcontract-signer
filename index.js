@@ -1,5 +1,42 @@
 /**
- *  Now, you can send the messages to sign to the http://localhost:1000/
+ * 	@description It opens the POST endpoint.
+ * 
+ * 	On that endpoint it receives the following information:
+ * 
+ *  signerAddress: the wallet that should sign the message.
+ *  params: [
+ * 		{
+ * 			"type": "UINT8"|"UINT256"|"ADDRESS"|"DECIMAL_18", "DECIMAL_6"
+ *  		"value": ""
+ * 		}
+ *  ]
+ * 
+ *  Then this signer will sign with the given address, and return the signature.
+ *  
+ *  HTTP 200 response:
+ *  {
+ * 		"signature": "",
+ *  }
+ * 
+ *  HTTP 400 response:
+ *  {
+ * 		"signature": "",
+ * 		"error": "UNRECOGNIZED_SIGNER_ADDRESS",
+ *  	"message": "The given '0x00.000' is invalid."
+ *  }
+ * 
+ *  The possible errors are:
+ *  	UNRECOGNIZED_PARAM_TYPE
+ * 		Parameter type `ADRESS` of paramter at index '0' is invalid.
+ * 
+ * 		MISSING_TYPE
+ * 		Parameter type of parameter at index '1' is missing.
+ * 		
+ * 		INVALID_VALUE
+ * 		The value `asd` of parameter at index '2' is not valid according to parameter type `UINT256`
+ * 
+ * 		MISSING_VALUE
+ * 		The value of the parameter at index '0' is missing.
  */
 
 const chalk 		= require("chalk");
@@ -16,14 +53,16 @@ const app = express()
 const port = 3000;
 
 /**
- * @description Print the Greetings to the Seascape Signer
+ * @description Print the Greetings to the Seascape Message Signer
+ * 
+ * This is the entry point of the Seascape Signer.
  */
- const init = async () => {
+const init = async () => {
     clear();
 
     console.log(
       chalk.yellow(
-        figlet.textSync("Seascape Signer", {
+        figlet.textSync("Seascape Message Signer", {
           font: "Standard",
           horizontalLayout: "default",
           verticalLayout: "default"
