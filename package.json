@@ -1,7 +1,7 @@
 {
-  "name": "contract-interactor",
+  "name": "seascape-message-signer",
   "version": "1.0.0",
-  "description": "A simple script to update winners leaderboard on smartcontract for seascape.network Nft Rush",
+  "description": "Verify Smartcontract interaction within Seascape Ecosystem",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -13,8 +13,9 @@
   "keywords": [
     "seascape",
     "crowns",
-    "express",
-    "ethereum"
+    "smartcontract",
+    "verifier",
+    "sign-message"
   ],
   "author": "Medet Ahmetson <ahmetson@zoho.com>",
   "license": "ISC",
