@@ -8,26 +8,26 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/blocklords/contract-interactor.git"
+    "url": "git+https://github.com/blocklords/seascape-message-signer.git"
   },
   "keywords": [
     "seascape",
     "crowns",
     "smartcontract",
     "verifier",
+    "ecrecover",
     "sign-message"
   ],
   "author": "Medet Ahmetson <ahmetson@zoho.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/blocklords/contract-interactor/issues"
+    "url": "https://github.com/blocklords/seascape-message-signer/issues"
   },
-  "homepage": "https://github.com/blocklords/contract-interactor#readme",
+  "homepage": "https://github.com/blocklords/seascape-message-signer#readme",
   "dependencies": {
     "@ethersproject/contracts": "^5.0.10",
     "@ethersproject/providers": "^5.4.5",
     "@ethersproject/solidity": "^5.0.9",
-    "@uniswap/sdk": "^3.0.3",
     "chalk": "^4.1.2",
     "clear": "^0.1.0",
     "clui": "^0.3.6",
@@ -37,7 +37,6 @@
     "figlet": "^1.5.2",
     "got": "^9.6.0",
     "inquirer": "^8.2.0",
-    "mysql": "^2.18.1",
     "node-schedule": "^2.0.0",
     "sh": "0.0.3",
     "shelljs": "^0.8.4",
