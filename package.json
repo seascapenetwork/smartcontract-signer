@@ -28,7 +28,6 @@
     "@ethersproject/providers": "^5.4.5",
     "@ethersproject/solidity": "^5.0.9",
     "@uniswap/sdk": "^3.0.3",
-    "amqplib": "^0.8.0",
     "chalk": "^4.1.2",
     "clear": "^0.1.0",
     "clui": "^0.3.6",
