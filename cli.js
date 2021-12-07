@@ -128,21 +128,51 @@ const argv = mainOptions._unknown || [];
         process.exit(0);
     } else if (mainOptions.command === 'wallet-list') {
         const listDefinitions = [
-            { name: 'all', alias: 'a', type: Boolean, defaultOption: false },
-            { name: 'unloaded', alias: 'u', type: Boolean, defaultOption: false }
+            { name: 'all', type: Boolean },
+            { name: 'unload', type: Boolean }
         ]
 
-
-        const listOptions = commandLineArgs(listDefinitions, { argv })
+        let listOptions;
+        try {
+            listOptions = commandLineArgs(listDefinitions, { argv })
+        } catch (error) {
+            console.log(chalk.yellow(error.toString()));
+            process.exit(1);
+        }
         if (Object.keys(listOptions).length === 0) {
+            console.log(chalk.gray(chalk.bold(`DECRYPTED`) + ` list of the wallets loaded into the Seascape Message Signer`));
+
             // todo show the loaded wallets
         } else if (listOptions['all']) {
-            // todo show all wallets in the /private directory
-        } else if (listOptions['u']) {
+            console.log(chalk.gray(chalk.bold(`ENCRYPED`) + ` list of all wallets`));
+
+            let encryptedWallets
+            try {
+                encryptedWallets = await listEncryptedWallets();
+            } catch (error) {
+                console.error(chalk.redBright(`Failed to fetch the encrypted wallets list`));
+                process.exit(1);
+            }
+
+            console.log(chalk.bold(`Found ${encryptedWallets.length} wallets!`))
+            for (var i in encryptedWallets) {
+                console.log(` ${parseInt(i) + 1}. ${encryptedWallets[i]}`);
+            }
+
+            process.exit(0);
+        } else if (listOptions['unload']) {
+            console.log(chalk.gray(chalk.bold(`ENCRYPED`) + ` list of all wallets that are not in Seascape Message Signer`));
+
             // todo show all unloaded wallets
         } else {
             // throw an error for undetected option
+            console.log(chalk.redBright(`Unsupported option`));
+
+            process.exit(1);
         }
+
+        process.exit(0);
+    } else if (mainOptions.command === 'wallet-create') {
     } else {
         console.log(mainDefinitions)
         if (mainDefinitions.command === undefined) {
