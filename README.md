@@ -21,19 +21,63 @@ Ready.
 
 # Running
 
-There are two ways to interact with the *Seascape Message Signer*:
-
-1. HTTP
-2. Message Queue through Rabbit MQ.
-
-In order to run through HTTP, you should call the `http-index.js`:
-
-
-
-Run the script with two Environment variables.
- ACCOUNT_1 - a privatekey of the transaction signer.
- INFURA_URL - a node endpoint. Free or paid ethereum node endpoint is available at https://infura.io/
+Run the code:
  
- Then, run the code:
- 
-   node index.js
+```node index.js```
+
+This will prompt the password for each account it finds.
+
+# How to sign
+ * 	On that endpoint it receives the following information:
+ * 
+ *  signerAddress: the wallet that should sign the message.
+ *  params: [
+ * 		{
+ * 			"type": "UINT8"|"UINT256"|"ADDRESS"|"DECIMAL_18", "DECIMAL_6"
+ *  		"value": ""
+ * 		}
+ *  ]
+ * 
+ *  Then this signer will sign with the given address, and return the signature.
+ *  
+ *  HTTP 200 response:
+ *  {
+ * 		"signature": "",
+ *  }
+ * 
+ *  HTTP 400 response:
+ *  {
+ * 		"signature": "",
+ * 		"error": "UNRECOGNIZED_SIGNER_ADDRESS",
+ *  	"message": "The given '0x00.000' is invalid."
+ *  }
+ * 
+ *  The possible errors are:
+ *  	UNRECOGNIZED_PARAM_TYPE
+ * 		Parameter type `ADRESS` of paramter at index '0' is invalid.
+ * 
+ * 		MISSING_TYPE
+ * 		Parameter type of parameter at index '1' is missing.
+ * 		
+ * 		INVALID_VALUE
+ * 		The value `asd` of parameter at index '2' is not valid according to parameter type `UINT256`
+ * 
+ * 		MISSING_VALUE
+ * 		The value of the parameter at index '0' is missing.
+
+# Usage
+Cli is the main gateway of the applicaion.
+
+- ```index.js``` - enables the RabbitMQ gateway. it will be the application that creates child processes.
+
+Cli commands:
+- ```cli.js gate-kill``` shuts down both server and encrypted parameters.
+- ```cli.js server-start``` enables to receive messages from outside to sign by privatekeys. It is running as the detached child process.
+- ```cli.js server-stop``` stops the server, preventing to sign messages. Sends the Message to the server to shut it down.
+- ```cli.js signer-start``` imports the encrypted wallets from /private folder, and enables them to the server. It is running as the detached child process.
+- ```cli.js signer-stop``` prevents from signing any message.
+- ```cli.js signer-add``` decrypted wallet is added to the signer.
+- ```cli.js signer-remove``` erases from signer's list in the signer.
+- ```cli.js wallet-list``` shows list of loaded encrypted wallets. `--all` argument lists all wallet names in the /private folder. --unloaded shows the list of wallets that are not loaded.
+- ```cli.js wallet-create``` adds the encrypted wallet into the /private folder.
+- ```cli.js wallet-delete``` removes the encrypted wallet from the /private directory.
