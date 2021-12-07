@@ -1,0 +1,34 @@
+version: "3.2"
+
+services:
+  message-signer:
+    build:
+      context: ./
+    container_name: "message-signer"
+    volumes:
+      - type: bind
+        source: ./
+        target: /home/node/app
+      - /home/node/app/node_modules
+    networks:
+      - net
+    entrypoint: sh
+    env_file:
+      - ./.env
+  mq:
+    image: rabbitmq:3.9.7
+    container_name: "mq"
+    restart: always
+    volumes:
+      - type: bind
+        source: ./mq/rabbitmq.conf
+        target: /etc/rabbitmq/rabbitmq.conf
+      # - type: bind
+        # source: ./mq/advanced.config
+        # target: /etc/rabbitmq/advanced.config
+    # ports:
+    # - "5672:5672"
+    networks:
+      - net
+networks:
+  net:
