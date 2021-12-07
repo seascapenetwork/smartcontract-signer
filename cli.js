@@ -18,7 +18,7 @@ const network = {};//require('./src/network');
 const { listEncryptedWallets } = require('./src/private-path');
 const chalk = require('chalk');
 const clear = require('clear');
-const { SIGNER_ADD } = require('./src/cli/signer-util');
+const { SIGNER_ADD, SIGNER_REMOVE } = require('./src/cli/signer-util');
  
 clear();
 
@@ -118,14 +118,47 @@ const argv = mainOptions._unknown || [];
             process.exit(0);
         }, 10000);
     } else if (mainOptions.command === 'signer-remove') {
-        console.log(chalk.gray(`Remove from the signer's list the wallet`));
+        console.log(chalk.gray(`Unloading the wallet from the signer!`));
 
-        let res = await sendOverMq(QUEUE_TYPE.GATEWAY, {command: SIGNER_STOP});
-        if (res === true) {
-            console.log(chalk.green(`Seascape Message Signer stopping signal was sent to Gateway!`));
+        const listDefinitions = [
+            { name: 'address', type: String },
+            { name: 'path', type: String }
+        ]
+
+        let listOptions;
+        try {
+            listOptions = commandLineArgs(listDefinitions, { argv })
+        } catch (error) {
+            console.log(chalk.yellow(error.toString()));
+            process.exit(1);
+        }
+
+        if (Object.keys(listOptions).length === 0) {
+            console.log(chalk.red(`--address or --path option was not given.`));
+            process.exit(1);
+            // todo show the loaded wallets
+        } 
+        
+        let overRpcParams = {command: SIGNER_REMOVE, path: listOptions['path'], address: listOptions['address']};
+        let res = await sendOverRpc(QUEUE_TYPE.SIGNER, overRpcParams, (content) => {
+            if (content.error) {
+                console.error(chalk.redBright(content.message));
+            } else {
+                console.log(chalk.green(`Wallet was successfully unloaded from the Signer!`));
+            }
+
+            setTimeout(() => {
+                process.exit(0);
+            }, 500);
+        });
+        if (res !== true) {
+            console.error(chalk.redBright(res));
         }
         
-        process.exit(0);
+        setTimeout(() => {
+            console.warn(chalk.yellowBright(`Signer didn't response within the 10 seconds! Please check the Gateway logs.`));
+            process.exit(0);
+        }, 10000);
     } else if (mainOptions.command === 'wallet-list') {
         const listDefinitions = [
             { name: 'all', type: Boolean },

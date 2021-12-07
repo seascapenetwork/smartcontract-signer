@@ -29,6 +29,37 @@ let walletExists = (walletPath) => {
 	return false;
 }
 
+let indexOf = (walletPath) => {
+	for (var i in wallets ) {
+		if (wallets[i].path == walletPath) {
+			return i;
+		}
+	}
+
+	return -1;
+}
+
+let walletExistsByAddress = (address) => {
+	for (var acc of wallets ) {
+		if (acc.wallet.address.toLowerCase() == address.toLowerCase()) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+let indexOfByAddress = (address) => {
+	for (var i in wallets ) {
+		if (wallets[i].wallet.address.toLowerCase() == address.toLowerCase()) {
+			return i;
+		}
+	}
+
+	return -1;
+}
+
+
 /**
  * @description This has to have boolean type return always.
  * @param {Object} content 
@@ -76,12 +107,49 @@ let onMsg = async (content, replyTo, correlationId) => {
 
 		wallets.push({
 			path: content.path,
-			wallet: wallet,
+			wallet: wallet
 		});
 
 		await mq.sendToQueue(conChannel.channel, rpcQueueType, {path: content.path, address: wallet.address}, {correlationId: correlationId});
 	} else if (content.command === SIGNER_REMOVE) {
+		if (!content.address && !content.path) {
+			console.log(`Missing path or address.`);
+			return false;
+		}
 
+		let walletIndex = -1;
+
+		if (content.address && !walletExistsByAddress(content.address)) {
+			let error = "NO_EXIST";
+			let message = `Address ${content.path} wasn't loaded`;
+			
+			await mq.sendToQueue(conChannel.channel, rpcQueueType, {path: content.path, address: "", error, message}, {correlationId: correlationId});
+			return false;
+		} else if (content.path && !walletExists(content.path)) {
+			let error = "NO_EXIST";
+			let message = `Wallet for path ${content.path} wasn't loaded`;
+			
+			await mq.sendToQueue(conChannel.channel, rpcQueueType, {path: content.path, address: "", error, message}, {correlationId: correlationId});
+			return false;
+		}
+
+		if (content.address) {
+			walletIndex = indexOfByAddress(content.address);
+		} else if (content.path) {
+			walletIndex = indexOf(content.path);
+		}
+
+		if (walletIndex === -1) {
+			let error = "NO_EXIST";
+			let message = `Wallet index couldn't be detected`;
+			
+			await mq.sendToQueue(conChannel.channel, rpcQueueType, {path: content.path, address: "", error, message}, {correlationId: correlationId});
+			return false;
+		} else {
+			wallets.splice(walletIndex, 1);
+		}
+
+		await mq.sendToQueue(conChannel.channel, rpcQueueType, {path: content.path, address: content.address}, {correlationId: correlationId});
 	} else if (content.command === SIGN) {
 
 	}

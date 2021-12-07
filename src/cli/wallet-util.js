@@ -23,8 +23,6 @@ let decryptWallet = async (json, password, spinner) => {
 
     let wallet;
     try {
-        console.log(`Decrypting the wallet`);
-        console.log(json, password);
         wallet = await ethers.Wallet.fromEncryptedJson(json, password);
     } catch (error) {
         if (spinner) {

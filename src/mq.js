@@ -108,7 +108,6 @@ let listenQueue = async (channel, queueType, onMsg) => {
 
 let sendToQueue = async (channel, queueType, obj, options) => {
     let str = JSON.stringify(obj);
-    console.log(`Send signal to ${queueType.queue}, with data `, obj, options);
     return channel.sendToQueue(queueType.queue, Buffer.from(str), options);
 };
 
