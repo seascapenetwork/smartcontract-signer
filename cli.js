@@ -265,7 +265,6 @@ const argv = mainOptions._unknown || [];
             process.exit(1);
         }
 
-        process.exit(0);
     } else if (mainOptions.command === 'wallet-create') {
     } else {
         console.log(mainDefinitions)
@@ -302,6 +301,3 @@ const argv = mainOptions._unknown || [];
         process.exit(1);
     }
 })();
-
-
-return;
