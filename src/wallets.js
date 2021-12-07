@@ -1,10 +1,8 @@
-#!/usr/bin/env node
-
 const inquirer = require("inquirer");
 const chalk = require("chalk");
 const clui = require('clui');
 const Spinner = clui.Spinner;
-const walletUtil = require("./src/wallet-util");
+const walletUtil = require("./cli/wallet-util");
 
 const askNftBrawl = () => {
     const questions = [
