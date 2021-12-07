@@ -18,6 +18,7 @@ let server;
 let signerScript = './src/signer.js';
 let serverScript = './src/server.js';
 
+
 (async () => {
   let conChannel;
   try {
@@ -29,8 +30,9 @@ let serverScript = './src/server.js';
 
   await attachToQueue(conChannel.channel, QUEUE_TYPE.GATEWAY);
 
+  console.warn(chalk.gray(" [*] Waiting for messages in %s. To exit press CTRL+C", QUEUE_TYPE.GATEWAY.queue));
+
   await listenQueue(conChannel.channel, QUEUE_TYPE.GATEWAY, (content) => {
-    console.warn(chalk.gray(" [*] Waiting for messages in %s. To exit press CTRL+C", QUEUE_TYPE.GATEWAY.queue));
 
     if (!content.command) {
       console.error(chalk.red(`Gateway: Missing command parameter`));
@@ -38,7 +40,7 @@ let serverScript = './src/server.js';
     }
 
     if (!isSupportedCommand(content.command)) {
-      console.error(chalk.red(`Gateway: unsupported ${command} command`));
+      console.error(chalk.red(`Gateway: unsupported ${content.command} command`));
       return false;
     }  
 
@@ -67,8 +69,10 @@ let serverScript = './src/server.js';
 
       return true;
     } else if (content.command === SIGNER_START) {
+      console.log(chalk.gray(`Starting the Signer`));
+      
       if (signer !== undefined) {
-        console.error(chalk.red(`Received SIGNER_START signal`));
+        console.error(chalk.red(`Signer already started. Received another SIGNER_START signal`));
         return false;
       }
       
@@ -107,6 +111,8 @@ let serverScript = './src/server.js';
             console.log(chalk.bold(`Gateway was killed!`));
           }
         });
+
+        process.exit(0);
       }, 3 * 1000);
 
       return true;
