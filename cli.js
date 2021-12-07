@@ -298,6 +298,8 @@ const argv = mainOptions._unknown || [];
             `    ` + chalk.blueBright(`wallet-create`) + `- adds the encrypted wallet into the /private folder.\n` +
             `    ` + chalk.blueBright(`wallet-delete`) + `- removes the encrypted wallet from the /private directory.\n`
         ));
-        process.exit(1);
+        setTimeout(() => {
+            process.exit(0);
+        }, 500);
     }
 })();
