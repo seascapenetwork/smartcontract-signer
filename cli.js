@@ -24,7 +24,7 @@ const mainDefinitions = [
     { name: 'command', defaultOption: true }
 ];
    
-const mainOptions = commandLineArgs(mainDefinitions, { stopAtFirstUnknown: false })
+const mainOptions = commandLineArgs(mainDefinitions, { stopAtFirstUnknown: true });
 const argv = mainOptions._unknown || [];
 
 (async () => {
