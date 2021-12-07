@@ -88,12 +88,35 @@ const argv = mainOptions._unknown || [];
     } else if (mainOptions.command === 'signer-add') {
         console.log(chalk.gray(`Decrypt the wallet and load into the signer`));
 
-        let res = await sendOverMq(QUEUE_TYPE.GATEWAY, {command: SIGNER_STOP});
-        if (res === true) {
-            console.log(chalk.green(`Seascape Message Signer stopping signal was sent to Gateway!`));
+        let readResult;
+        try {
+            readResult = await read();
+        } catch (error) {
+            setTimeout(() => {
+                process.exit(1);
+            }, 500);
+        }
+
+        let overRpcParams = {command: SIGNER_ADD, path: readResult.path, passphrase: readResult.passphrase};
+        let res = await sendOverRpc(QUEUE_TYPE.SIGNER, overRpcParams, (content) => {
+            if (content.error) {
+                console.error(chalk.redBright(content.message));
+            } else {
+                console.log(chalk.green(`Seascape Message Signer add signal was sent to Gateway!`));
+            }
+
+            setTimeout(() => {
+                process.exit(0);
+            }, 500);
+        });
+        if (res !== true) {
+            console.error(chalk.redBright(res));
         }
         
-        process.exit(0);
+        setTimeout(() => {
+            console.warn(chalk.yellowBright(`Signer didn't response within the 10 seconds! Please check the Gateway logs.`));
+            process.exit(0);
+        }, 10000);
     } else if (mainOptions.command === 'signer-remove') {
         console.log(chalk.gray(`Remove from the signer's list the wallet`));
 
