@@ -12,10 +12,13 @@
  */
 const commandLineArgs = require('command-line-args');
 const { SIGNER_START, SIGNER_STOP, SERVER_START, SERVER_STOP, KILL } = require('./src/cli/gateway-util');
-const { sendOverMq, QUEUE_TYPE } = require('./src/mq');
+const { read } = require('./src/cli/wallet-util');
+const { sendOverMq, sendOverRpc, QUEUE_TYPE } = require('./src/mq');
 const network = {};//require('./src/network');
+const { listEncryptedWallets } = require('./src/private-path');
 const chalk = require('chalk');
 const clear = require('clear');
+const { SIGNER_ADD } = require('./src/cli/signer-util');
  
 clear();
 
@@ -37,7 +40,9 @@ const argv = mainOptions._unknown || [];
             console.log(chalk.green(`Kill Signal was sent to Gateway!`));
         }
         
-        process.exit(0);
+        setTimeout(() => {
+            process.exit(0);
+        }, 500);
     } else if (mainOptions.command === 'server-start') {
         console.log(chalk.gray(`Starting the server`));
 
@@ -46,7 +51,9 @@ const argv = mainOptions._unknown || [];
             console.log(chalk.green(`Seascape Message Signer starting signal was sent to Gateway!`));
         }
         
-        process.exit(0);
+        setTimeout(() => {
+            process.exit(0);
+        }, 500);
     } else if (mainOptions.command === 'server-stop') {
         console.log(chalk.gray(`Stopping the server`));
 
@@ -55,16 +62,20 @@ const argv = mainOptions._unknown || [];
             console.log(chalk.green(`Seascape Message Signer stopping signal was sent to Gateway!`));
         }
         
-        process.exit(0);
+        setTimeout(() => {
+            process.exit(0);
+        }, 500);
     } else if (mainOptions.command === 'signer-start') {
         console.log(chalk.gray(`Start the signer`));
 
         let res = await sendOverMq(QUEUE_TYPE.GATEWAY, {command: SIGNER_START});
         if (res === true) {
-            console.log(chalk.green(`Seascape Message Signer stopping signal was sent to Gateway!`));
+            console.log(chalk.green(`Seascape Message Signer starting signal was sent to Gateway!`));
         }
         
-        process.exit(0);
+        setTimeout(() => {
+            process.exit(0);
+        }, 500);
     } else if (mainOptions.command === 'signer-stop') {
         console.log(chalk.gray(`Stop the signer`));
 
