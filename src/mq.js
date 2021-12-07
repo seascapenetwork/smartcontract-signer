@@ -162,6 +162,7 @@ let sendOverRpc = async (queueType, data, callback) => {
     rpcQueueType.queue = attachment.queue;
 
     await listenQueue(conChannel.channel, rpcQueueType, async (content, _replyTo, _correlationId) => {
+
         if (_correlationId != correlationId) {
             return false;
         }
