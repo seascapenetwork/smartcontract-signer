@@ -14,11 +14,10 @@ const commandLineArgs = require('command-line-args');
 const { SIGNER_START, SIGNER_STOP, SERVER_START, SERVER_STOP, KILL } = require('./src/cli/gateway-util');
 const { read } = require('./src/cli/wallet-util');
 const { sendOverMq, sendOverRpc, QUEUE_TYPE } = require('./src/mq');
-const network = {};//require('./src/network');
 const { listEncryptedWallets } = require('./src/private-path');
 const chalk = require('chalk');
 const clear = require('clear');
-const { SIGNER_ADD, SIGNER_REMOVE } = require('./src/cli/signer-util');
+const { SIGNER_ADD, SIGNER_REMOVE, SIGNER_LIST } = require('./src/cli/signer-util');
  
 clear();
 
@@ -175,7 +174,27 @@ const argv = mainOptions._unknown || [];
         if (Object.keys(listOptions).length === 0) {
             console.log(chalk.gray(chalk.bold(`DECRYPTED`) + ` list of the wallets loaded into the Seascape Message Signer`));
 
-            // todo show the loaded wallets
+            let overRpcParams = {command: SIGNER_LIST};
+            let res = await sendOverRpc(QUEUE_TYPE.SIGNER, overRpcParams, (content) => {
+                console.log(chalk.green(`Loaded ${content.length} wallets!`));
+
+                for (var i in content) {
+                    let wallet = content[i];
+                    console.log(`  ${parseInt(i) + 1}. ` + chalk.blueBright(wallet.address) + ` in ${wallet.path}.json`);
+                }
+
+                setTimeout(() => {
+                    process.exit(0);
+                }, 500);
+            });
+            if (res !== true) {
+                console.error(chalk.redBright(res));
+            }
+            
+            setTimeout(() => {
+                console.warn(chalk.yellowBright(`Signer didn't response within the 10 seconds! Please check the Gateway logs.`));
+                process.exit(0);
+            }, 10000);
         } else if (listOptions['all']) {
             console.log(chalk.gray(chalk.bold(`ENCRYPED`) + ` list of all wallets`));
 
@@ -196,7 +215,49 @@ const argv = mainOptions._unknown || [];
         } else if (listOptions['unload']) {
             console.log(chalk.gray(chalk.bold(`ENCRYPED`) + ` list of all wallets that are not in Seascape Message Signer`));
 
-            // todo show all unloaded wallets
+            let encryptedWallets
+            try {
+                encryptedWallets = await listEncryptedWallets();
+            } catch (error) {
+                console.error(chalk.redBright(`Failed to fetch the encrypted wallets list`));
+                process.exit(1);
+            }
+
+            let overRpcParams = {command: SIGNER_LIST};
+            let res = await sendOverRpc(QUEUE_TYPE.SIGNER, overRpcParams, async (content) => {
+                let unloaded = [];
+
+                for (var encryptedPath of encryptedWallets) {
+                    let loaded = false;
+                    for (var decrypted of content) {
+                        if (decrypted.path + '.json' == encryptedPath) {
+                            loaded = true;
+                            break;
+                        }
+                    }
+
+                    if (!loaded) {
+                        unloaded.push(encryptedPath);
+                    }
+                }
+
+                console.log(chalk.bold(`Found ${unloaded.length} wallets!`))
+                for (var i in unloaded) {
+                    console.log(` ${parseInt(i) + 1}. ${unloaded[i]}`);
+                }
+
+                setTimeout(() => {
+                    process.exit(0);
+                }, 500);
+            });
+            if (res !== true) {
+                console.error(chalk.redBright(res));
+            }
+            
+            setTimeout(() => {
+                console.warn(chalk.yellowBright(`Signer didn't response within the 10 seconds! Please check the Gateway logs.`));
+                process.exit(0);
+            }, 10000);
         } else {
             // throw an error for undetected option
             console.log(chalk.redBright(`Unsupported option`));

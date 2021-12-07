@@ -7,7 +7,7 @@
  * It runs the RPC server
  */
 const chalk 		      = require("chalk");
-const { isSupportedCommand, SIGNER_ADD, SIGNER_REMOVE } = require('./cli/signer-util');
+const { isSupportedCommand, SIGNER_ADD, SIGNER_REMOVE, SIGNER_LIST, SIGN } = require('./cli/signer-util');
 const walletUtil = require('./cli/wallet-util');
 let mq = require('./mq');
 
@@ -73,12 +73,10 @@ let onMsg = async (content, replyTo, correlationId) => {
 		return false;
 	}
 	if (!content.command || !isSupportedCommand(content.command)) {
+		console.error(chalk.redBright(`Unsupported command ${content.command}`));
 		return false;
 	}
 
-	if (!content.path) {
-		return false;
-	}
 
 	let rpcQueueType = mq.QUEUE_TYPE.RPC;
 	rpcQueueType.queue = replyTo;
@@ -111,6 +109,7 @@ let onMsg = async (content, replyTo, correlationId) => {
 		});
 
 		await mq.sendToQueue(conChannel.channel, rpcQueueType, {path: content.path, address: wallet.address}, {correlationId: correlationId});
+		return true;
 	} else if (content.command === SIGNER_REMOVE) {
 		if (!content.address && !content.path) {
 			console.log(`Missing path or address.`);
@@ -150,8 +149,24 @@ let onMsg = async (content, replyTo, correlationId) => {
 		}
 
 		await mq.sendToQueue(conChannel.channel, rpcQueueType, {path: content.path, address: content.address}, {correlationId: correlationId});
+	
+		return true;
 	} else if (content.command === SIGN) {
 
+	} else if (content.command === SIGNER_LIST) {
+		console.log(`Listing the loaded wallets`);
+		let list = [];
+		for (var acc of wallets) {
+			list.push({
+				path: acc.path,
+				address: acc.wallet.address
+			});
+		}
+
+		console.log(list);
+		await mq.sendToQueue(conChannel.channel, rpcQueueType, list, {correlationId: correlationId});
+
+		return true;
 	}
 
 	return false;

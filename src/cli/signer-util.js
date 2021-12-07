@@ -1,7 +1,8 @@
 let commands = [
     "signer-add",
     "signer-remove",
-    "sign"
+    "sign",
+    "signer-list"
 ]
 
 let isSupportedCommand = (command) => {
@@ -12,3 +13,4 @@ module.exports.isSupportedCommand = isSupportedCommand;
 module.exports.SIGNER_ADD = commands[0];
 module.exports.SIGNER_REMOVE = commands[1];
 module.exports.SIGN = commands[2];
+module.exports.SIGNER_LIST = commands[3];
