@@ -9,6 +9,7 @@
 const chalk 		      = require("chalk");
 const { isSupportedCommand, SIGNER_ADD, SIGNER_REMOVE, SIGNER_LIST, SIGN } = require('./cli/signer-util');
 const walletUtil = require('./cli/wallet-util');
+const { getSignature } = require('./cli/sign');
 let mq = require('./mq');
 
 // List of the decrypted wallets.
@@ -152,7 +153,54 @@ let onMsg = async (content, replyTo, correlationId) => {
 	
 		return true;
 	} else if (content.command === SIGN) {
+		// include address and message to sign
+		if (!content.address) {
+			await mq.sendToQueue(conChannel.channel, rpcQueueType, 
+				{error: "MISSING_ADDRESS", message: "No address"}, 
+				{correlationId: correlationId}
+			);
 
+			return false;
+		}
+
+		if (!content.message) {
+			await mq.sendToQueue(conChannel.channel, rpcQueueType, 
+				{error: "MISSING_MESSAGE", message: "No message to sign"}, 
+				{correlationId: correlationId}
+			);
+
+			return false;
+		}
+
+		if (!walletExistsByAddress(content.address)) {
+			await mq.sendToQueue(conChannel.channel, rpcQueueType, 
+				{error: "INVALID_ADDRESS", message: `The passed signer ${content.address} is not loaded`}, 
+				{correlationId: correlationId}
+			);
+
+			return false;
+		}
+
+		let walletIndex = indexOfByAddress(content.address);
+
+		let signature = "";
+		try {
+			signature = await getSignature(content.message, wallets[walletIndex].wallet);
+		} catch (error) {
+			await mq.sendToQueue(conChannel.channel, rpcQueueType, 
+				{error: "INVALID_SIGNATURE", message: `Could not generate a signature for ${content.message} by '${content.address}'`}, 
+				{correlationId: correlationId}
+			);
+
+			return false;
+		}
+
+		await mq.sendToQueue(conChannel.channel, rpcQueueType, 
+			{signature: signature}, 
+			{correlationId: correlationId}
+		);
+
+		return true;
 	} else if (content.command === SIGNER_LIST) {
 		console.log(`Listing the loaded wallets`);
 		let list = [];
