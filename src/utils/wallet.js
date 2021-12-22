@@ -205,7 +205,7 @@ const del = async () => {
     // Get Credentials
     const { WALLET } = await askDelete();
 
-    await walletUtil.deleteWallet(WALLET);
+    await deleteWallet(WALLET);
 
     console.log(chalk.blue(`\n\nThe ${WALLET} deleted!`));
 };

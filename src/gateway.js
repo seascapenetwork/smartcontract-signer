@@ -11,7 +11,7 @@
 const chalk 		      = require("chalk");
 const { fork }        = require('child_process');
 const { connect, attachToQueue, QUEUE_TYPE, listenQueue } = require('./mq');
-const { isSupportedCommand, SIGNER_START, SIGNER_STOP, SERVER_START, SERVER_STOP, KILL } = require('./cli/gateway-util');
+const { isSupportedCommand, SIGNER_START, SIGNER_STOP, SERVER_START, SERVER_STOP, KILL } = require('./utils/gateway');
 
 let signer;
 let server;

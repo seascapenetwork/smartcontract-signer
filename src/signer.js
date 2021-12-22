@@ -8,14 +8,14 @@
  */
 const chalk 		      = require("chalk");
 const { isSupportedCommand, SIGNER_ADD, SIGNER_REMOVE, SIGNER_LIST, SIGN, getSignature } = require('./utils/signer');
-const walletUtil = require('./cli/wallet-util');
+const walletUtil = require('./utils/wallet');
 let mq = require('./mq');
 
 // List of the decrypted wallets.
 let conChannel;
 
 // List of the decrypted wallets
-// its the object containing the web3.Wallet in the wallet parameter.
+// its the object containing the Wallet in the wallet parameter.
 // and path containing the wallet file name in the private folder.
 let wallets = [];
 
