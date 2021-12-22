@@ -10,7 +10,8 @@ const { sendOverRpc, QUEUE_TYPE } = require('./mq');
 
 // or server to listen to sign up
 const express = require('express');
-const app = express()
+const app = express();
+app.use(express.json()); // built-in middleware for express
 const port = 3000;
 
 /**
@@ -34,15 +35,16 @@ app.post('/sign-message', async (req, res) => {
 	// incoming parameters
 	// ----------------------------------------------------------------
 	let validation = validateParams(req.body.params);
-	if (!validation) {
+	if (validation !== true) {
 		validation.signature = "";
-		res.status(404).send(validation);
+		return res.status(404).send(validation);
 	}
 
 	let message;
 	try {
 		message = await getMessage(req.body.params);
 	} catch (error) {
+		console.error(error);
 		return res.status(500).send({
 			signature: "",
 			error: "INVALID_MESSAGE",
@@ -60,7 +62,7 @@ app.post('/sign-message', async (req, res) => {
 				message: content.message
 			})
 		} else {
-            console.log(chalk.green(`Smartcontract Signer add signal was sent to Gateway!`));
+            console.log(chalk.green(`Server received the signature from the Signer!`));
 			return res.send({
 				signature: content.signature
 			});
