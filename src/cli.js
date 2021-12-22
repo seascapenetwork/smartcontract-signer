@@ -276,7 +276,7 @@ const argv              = mainOptions._unknown || [];
                 console.error(chalk.redBright(res));
             }
             
-            exit(10, `Signer didn't response within the 10 seconds! Please check the Gateway logs.`);
+            exit(10, `Signer didn't response within the 10 seconds! Are you sure that Signer is running?`);
         } else {
             exit(0, `Unsupported option`);
         }
@@ -299,7 +299,7 @@ const argv              = mainOptions._unknown || [];
         try {
             result = await del();
         } catch (error) {
-            exit(0.5, "Failed to delete the encrypted file based on the user input");
+            exit(0.5, `Failed to delete the encrypted file based on the user input ${error.toString()}`);
         }
 
         console.log(chalk.blueBright(`Deleted an encrypted wallet file!`))
@@ -331,7 +331,7 @@ const argv              = mainOptions._unknown || [];
             `    ` + chalk.blueBright(`wallet-list`) + `  - shows list of loaded encrypted wallets.\n` +
             `        ` + chalk.grey(`The following arguments are supported:`) + '\n' +
             `        ` + chalk.grey(chalk.bold('--all       ') + `argument lists all wallet names in the /private folder.`) + `\n` +
-            `        ` + chalk.grey(chalk.bold('--unloaded  ') + `unloaded shows the list of wallets that are not loaded.`) + `\n` +
+            `        ` + chalk.grey(chalk.bold('--unload  ') + `unloaded shows the list of wallets that are not loaded.`) + `\n` +
             `    ` + chalk.blueBright(`wallet-create`) + `- adds the encrypted wallet into the /private folder.\n` +
             `    ` + chalk.blueBright(`wallet-delete`) + `- removes the encrypted wallet from the /private directory.\n`
         ));
