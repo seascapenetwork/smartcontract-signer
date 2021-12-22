@@ -173,7 +173,7 @@ let onMsg = async (content, replyTo, correlationId) => {
 
 		if (!walletExistsByAddress(content.address)) {
 			await mq.sendToQueue(conChannel.channel, rpcQueueType, 
-				{error: "INVALID_ADDRESS", message: `The passed signer ${content.address} is not loaded`}, 
+				{error: "INVALID_ADDRESS", message: `The passed signer '${content.address}' is not loaded`}, 
 				{correlationId: correlationId}
 			);
 
