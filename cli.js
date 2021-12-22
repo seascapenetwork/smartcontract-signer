@@ -10,27 +10,57 @@
  * Add contract events to the Eventeum.
  * Listen to the contract events and redirect to supported Seascape Backend.
  */
-const commandLineArgs = require('command-line-args');
-const { SIGNER_START, SIGNER_STOP, SERVER_START, SERVER_STOP, KILL } = require('./src/cli/gateway-util');
-const { read } = require('./src/cli/wallet-util');
+const { SIGNER_START, SIGNER_STOP, SERVER_START, SERVER_STOP, KILL } = require('./src/utils/gateway');
+const { SIGNER_ADD, SIGNER_REMOVE, SIGNER_LIST } = require('./src/utils/signer');
 const { sendOverMq, sendOverRpc, QUEUE_TYPE } = require('./src/mq');
-const { listEncryptedWallets } = require('./src/private-path');
-const chalk = require('chalk');
-const clear = require('clear');
-const { SIGNER_ADD, SIGNER_REMOVE, SIGNER_LIST } = require('./src/cli/signer-util');
- 
-clear();
+const commandLineArgs               = require('command-line-args');
+const { read, create, del }         = require('./src/utils/wallet');
+const { listEncryptedWallets }      = require('./src/private-path');
+const chalk                         = require('chalk');
 
-/* first - parse the main command */
-const mainDefinitions = [
-    { name: 'command', defaultOption: true }
-];
-   
-const mainOptions = commandLineArgs(mainDefinitions, { stopAtFirstUnknown: true });
-const argv = mainOptions._unknown || [];
+// Clean the screen before executing the CLI
+require('clear')(); 
+
+/**
+ * Exit with the delay from the background
+ * @param {number} delay in seconds 
+ * @param {string} message to show in case of the error
+ * @returns 
+ */
+let exit = (delay, message) => {
+    if (delay === undefined) {
+        delay = 500;    // default delay is 0.5 seconds
+    } else {
+        delay *= 1000;
+    }
+
+    if (delay === 0) {
+        if (message) {
+            console.error(chalk.redBright(message));
+            process.exit(1);
+        } else {
+            process.exit(0);
+        }
+    } else {
+        setTimeout(() => {
+            if (message) {
+                console.error(chalk.redBright(message));
+                process.exit(1);
+            } else {
+                process.exit(0);
+            }
+        }, delay);
+    }
+}
+
+// first - parse the main command
+const mainDefinitions   = [ { name: 'command', defaultOption: true } ];
+const mainOptions       = commandLineArgs(mainDefinitions, { stopAtFirstUnknown: true });
+const argv              = mainOptions._unknown || [];
 
 (async () => {
-    /* second - parse the merge command options */
+    "use strict";
+
     if (mainOptions.command === 'gate-kill') {
         console.log(chalk.gray(`Killing the Gateway`));
         
@@ -38,10 +68,9 @@ const argv = mainOptions._unknown || [];
         if (res === true) {
             console.log(chalk.green(`Kill Signal was sent to Gateway!`));
         }
-        
-        setTimeout(() => {
-            process.exit(0);
-        }, 500);
+
+        // Just need to delay exit to close the Message Queue server.
+        exit();
     } else if (mainOptions.command === 'server-start') {
         console.log(chalk.gray(`Starting the server`));
 
@@ -50,9 +79,7 @@ const argv = mainOptions._unknown || [];
             console.log(chalk.green(`Seascape Message Signer starting signal was sent to Gateway!`));
         }
         
-        setTimeout(() => {
-            process.exit(0);
-        }, 500);
+        exit();
     } else if (mainOptions.command === 'server-stop') {
         console.log(chalk.gray(`Stopping the server`));
 
@@ -61,9 +88,7 @@ const argv = mainOptions._unknown || [];
             console.log(chalk.green(`Seascape Message Signer stopping signal was sent to Gateway!`));
         }
         
-        setTimeout(() => {
-            process.exit(0);
-        }, 500);
+        exit();
     } else if (mainOptions.command === 'signer-start') {
         console.log(chalk.gray(`Start the signer`));
 
@@ -72,9 +97,7 @@ const argv = mainOptions._unknown || [];
             console.log(chalk.green(`Seascape Message Signer starting signal was sent to Gateway!`));
         }
         
-        setTimeout(() => {
-            process.exit(0);
-        }, 500);
+        exit();
     } else if (mainOptions.command === 'signer-stop') {
         console.log(chalk.gray(`Stop the signer`));
 
@@ -83,7 +106,7 @@ const argv = mainOptions._unknown || [];
             console.log(chalk.green(`Seascape Message Signer stopping signal was sent to Gateway!`));
         }
         
-        process.exit(0);
+        exit();
     } else if (mainOptions.command === 'signer-add') {
         console.log(chalk.gray(`Decrypt the wallet and load into the signer`));
 
@@ -91,9 +114,7 @@ const argv = mainOptions._unknown || [];
         try {
             readResult = await read();
         } catch (error) {
-            setTimeout(() => {
-                process.exit(1);
-            }, 500);
+            exit(0.5, "Failed to read the info from user");
         }
 
         let overRpcParams = {command: SIGNER_ADD, path: readResult.path, passphrase: readResult.passphrase};
@@ -104,18 +125,13 @@ const argv = mainOptions._unknown || [];
                 console.log(chalk.green(`Seascape Message Signer add signal was sent to Gateway!`));
             }
 
-            setTimeout(() => {
-                process.exit(0);
-            }, 500);
+            exit();
         });
         if (res !== true) {
             console.error(chalk.redBright(res));
         }
         
-        setTimeout(() => {
-            console.warn(chalk.yellowBright(`Signer didn't response within the 10 seconds! Please check the Gateway logs.`));
-            process.exit(0);
-        }, 10000);
+        exit(10, `Signer didn't response within the 10 seconds! Please check the Gateway logs.`);
     } else if (mainOptions.command === 'signer-remove') {
         console.log(chalk.gray(`Unloading the wallet from the signer!`));
 
@@ -133,8 +149,7 @@ const argv = mainOptions._unknown || [];
         }
 
         if (Object.keys(listOptions).length === 0) {
-            console.log(chalk.red(`--address or --path option was not given.`));
-            process.exit(1);
+            exit(0.1, `--address or --path option was not given.`);
             // todo show the loaded wallets
         } 
         
@@ -146,18 +161,13 @@ const argv = mainOptions._unknown || [];
                 console.log(chalk.green(`Wallet was successfully unloaded from the Signer!`));
             }
 
-            setTimeout(() => {
-                process.exit(0);
-            }, 500);
+            exit();
         });
         if (res !== true) {
             console.error(chalk.redBright(res));
         }
         
-        setTimeout(() => {
-            console.warn(chalk.yellowBright(`Signer didn't response within the 10 seconds! Please check the Gateway logs.`));
-            process.exit(0);
-        }, 10000);
+        exit(10, `Signer didn't response within the 10 seconds! Please check the Gateway logs.`);
     } else if (mainOptions.command === 'wallet-list') {
         const listDefinitions = [
             { name: 'all', type: Boolean },
@@ -168,9 +178,9 @@ const argv = mainOptions._unknown || [];
         try {
             listOptions = commandLineArgs(listDefinitions, { argv })
         } catch (error) {
-            console.log(chalk.yellow(error.toString()));
-            process.exit(1);
+            exit(0, error.toString());
         }
+
         if (Object.keys(listOptions).length === 0) {
             console.log(chalk.gray(chalk.bold(`DECRYPTED`) + ` list of the wallets loaded into the Seascape Message Signer`));
 
@@ -183,18 +193,13 @@ const argv = mainOptions._unknown || [];
                     console.log(`  ${parseInt(i) + 1}. ` + chalk.blueBright(wallet.address) + ` in ${wallet.path}.json`);
                 }
 
-                setTimeout(() => {
-                    process.exit(0);
-                }, 500);
+                exit();
             });
             if (res !== true) {
                 console.error(chalk.redBright(res));
             }
             
-            setTimeout(() => {
-                console.warn(chalk.yellowBright(`Signer didn't response within the 10 seconds! Please check the Gateway logs.`));
-                process.exit(0);
-            }, 10000);
+            exit(10, `Signer didn't response within the 10 seconds! Please check the Gateway logs.`);
         } else if (listOptions['all']) {
             console.log(chalk.gray(chalk.bold(`ENCRYPED`) + ` list of all wallets`));
 
@@ -202,8 +207,7 @@ const argv = mainOptions._unknown || [];
             try {
                 encryptedWallets = await listEncryptedWallets();
             } catch (error) {
-                console.error(chalk.redBright(`Failed to fetch the encrypted wallets list`));
-                process.exit(1);
+                exit(0, `Failed to fetch the encrypted wallets list`);
             }
 
             console.log(chalk.bold(`Found ${encryptedWallets.length} wallets!`))
@@ -211,7 +215,7 @@ const argv = mainOptions._unknown || [];
                 console.log(` ${parseInt(i) + 1}. ${encryptedWallets[i]}`);
             }
 
-            process.exit(0);
+            exit();
         } else if (listOptions['unload']) {
             console.log(chalk.gray(chalk.bold(`ENCRYPED`) + ` list of all wallets that are not in Seascape Message Signer`));
 
@@ -219,8 +223,7 @@ const argv = mainOptions._unknown || [];
             try {
                 encryptedWallets = await listEncryptedWallets();
             } catch (error) {
-                console.error(chalk.redBright(`Failed to fetch the encrypted wallets list`));
-                process.exit(1);
+                exit(0, `Failed to fetch the encrypted wallets list`);
             }
 
             let overRpcParams = {command: SIGNER_LIST};
@@ -246,28 +249,41 @@ const argv = mainOptions._unknown || [];
                     console.log(` ${parseInt(i) + 1}. ${unloaded[i]}`);
                 }
 
-                setTimeout(() => {
-                    process.exit(0);
-                }, 500);
+                exit();
             });
             if (res !== true) {
                 console.error(chalk.redBright(res));
             }
             
-            setTimeout(() => {
-                console.warn(chalk.yellowBright(`Signer didn't response within the 10 seconds! Please check the Gateway logs.`));
-                process.exit(0);
-            }, 10000);
+            exit(10, `Signer didn't response within the 10 seconds! Please check the Gateway logs.`);
         } else {
-            // throw an error for undetected option
-            console.log(chalk.redBright(`Unsupported option`));
+            exit(0, `Unsupported option`);
+        }
+    } else if (mainOptions.command === 'wallet-create') {
+        console.log(chalk.gray(`Creating a new encrypted Wallet!`));
 
-            process.exit(1);
+        let result;
+        try {
+            result = await create();
+        } catch (error) {
+            exit(0.5, "Failed to create encrypted file based on the user input");
         }
 
-    } else if (mainOptions.command === 'wallet-create') {
+        console.log(chalk.blueBright(`Created an encrypted wallet file!`))
+        exit(0.5);
+    } else if (mainOptions.command === 'wallet-delete') {
+        console.log(chalk.gray(`Deleting a new encrypted Wallet!`));
+
+        let result;
+        try {
+            result = await del();
+        } catch (error) {
+            exit(0.5, "Failed to delete the encrypted file based on the user input");
+        }
+
+        console.log(chalk.blueBright(`Deleted an encrypted wallet file!`))
+        exit(0.5);
     } else {
-        console.log(mainDefinitions)
         if (mainDefinitions.command === undefined) {
             console.log(chalk.red(`Missing the command`));
         } else {
@@ -298,8 +314,7 @@ const argv = mainOptions._unknown || [];
             `    ` + chalk.blueBright(`wallet-create`) + `- adds the encrypted wallet into the /private folder.\n` +
             `    ` + chalk.blueBright(`wallet-delete`) + `- removes the encrypted wallet from the /private directory.\n`
         ));
-        setTimeout(() => {
-            process.exit(0);
-        }, 500);
+
+        exit();
     }
 })();
