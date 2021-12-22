@@ -1,10 +1,10 @@
-FROM node:14
+FROM node:17.3.0-slim
 
 USER root
 
 WORKDIR /home/node/app
 
-COPY ../package.json ./
+COPY ./package.json ./
 
 RUN npm -g config set user root
 RUN npm cache clean --force

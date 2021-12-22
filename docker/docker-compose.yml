@@ -4,6 +4,7 @@ services:
   signer:
     build:
       context: ../
+      dockerfile: ./docker/Dockerfile
     container_name: "signer"
     volumes:
       - type: bind
@@ -13,8 +14,9 @@ services:
     networks:
       - net
     entrypoint: sh
+    command: '-c "sleep 1d"'
     env_file:
-      - ./.env
+      - ../.env
   mq:
     image: rabbitmq:3.9.7
     container_name: "mq"
