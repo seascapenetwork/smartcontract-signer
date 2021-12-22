@@ -18,7 +18,7 @@ let QUEUE_TYPE = {
         autoDelete: true
     },
     RPC: {
-        queue: '',
+        queue: 'amq.rabbitmq.reply-to',
         exclusive: true,
         durable: false,
         noack: true,
