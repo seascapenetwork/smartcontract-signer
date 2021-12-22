@@ -28,7 +28,7 @@ let types = [
 let validateValue = (param) => {
      if (param.type === 'UINT8' || param.type === 'UINT256' || param.type === 'DECIMAL_18' || param.type === 'DECIMAL_6') {
          let value = parseFloat(param.value);
-         if (isNaN(value) || value <= 0) {
+         if (isNaN(value) || value < 0) {
              return false;
          }
      }
@@ -92,11 +92,11 @@ let validateParams = (params) => {
          if (types.indexOf(param.type) === -1) {
              return {
                  error: "UNRECOGNIZED_PARAM_TYPE",
-                 message: `Parameter type ${param.type} of paramter at index '${i}' is invalid.`
+                 message: `Parameter type '${param.type}' of paramter at index '${i}' is invalid.`
              }
          }
  
-         if (!param.value) {
+         if (!param.value && param.value !== 0) {
              return {
                  error: "MISSING_VALUE",
                  message: `The value of the parameter at index '${i}' is missing.`
@@ -106,7 +106,7 @@ let validateParams = (params) => {
          if (!validateValue(param)) {
               return {
                  error: "UNRECOGNIZED_PARAM_VALUE",
-                 message: `The value '${param.value}' of parameter at index '${i}' is not valid according to parameter type '${param.value}'`
+                 message: `The value '${param.value}' of parameter at index '${i}' is not valid according to parameter type '${param.type}'`
              }
          }
      }
