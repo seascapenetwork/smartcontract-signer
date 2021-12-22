@@ -7,9 +7,8 @@
  * It runs the RPC server
  */
 const chalk 		      = require("chalk");
-const { isSupportedCommand, SIGNER_ADD, SIGNER_REMOVE, SIGNER_LIST, SIGN } = require('./cli/signer-util');
+const { isSupportedCommand, SIGNER_ADD, SIGNER_REMOVE, SIGNER_LIST, SIGN, getSignature } = require('./utils/signer');
 const walletUtil = require('./cli/wallet-util');
-const { getSignature } = require('./cli/sign');
 let mq = require('./mq');
 
 // List of the decrypted wallets.

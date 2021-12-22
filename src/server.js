@@ -5,10 +5,8 @@
  */
 
 const chalk 		= require('chalk');
-const { SIGN } = require('./cli/signer-util');
+const { SIGN, validateParams, getMessage } = require('./util/signer');
 const { sendOverRpc, QUEUE_TYPE } = require('./src/mq');
-
-const sign            = require('./cli/sign');
 
 // or server to listen to sign up
 const express = require('express');
@@ -35,18 +33,7 @@ app.post('/sign-message', async (req, res) => {
 	// ----------------------------------------------------------------
 	// incoming parameters
 	// ----------------------------------------------------------------
-	let paramError = sign.validateParams(signType, content.params);
-    if (paramError) {
-        console.error(chalk.red(paramError));
-        res.status(404).send({
-			signature: "",
-			error: "MISSING_SIGNER",
-			message: "Please specify the user"
-		});
-		return;
-	}
-
-	let validation = sign.validateParams(req.body.params);
+	let validation = validateParams(req.body.params);
 	if (!validation) {
 		validation.signature = "";
 		res.status(404).send(validation);
@@ -54,7 +41,7 @@ app.post('/sign-message', async (req, res) => {
 
 	let message;
 	try {
-		message = await sign.getMessage(req.body.params);
+		message = await getMessage(req.body.params);
 	} catch (error) {
 		return res.status(500).send({
 			signature: "",
