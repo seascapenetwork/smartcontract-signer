@@ -6,12 +6,12 @@
  * @author Medet Ahmetson <admin@blocklords.io>
  */
 
-const { SIGNER_START, SIGNER_STOP, SERVER_START, SERVER_STOP, KILL } = require('./src/utils/gateway');
-const { SIGNER_ADD, SIGNER_REMOVE, SIGNER_LIST } = require('./src/utils/signer');
-const { sendOverMq, sendOverRpc, QUEUE_TYPE } = require('./src/mq');
+const { SIGNER_START, SIGNER_STOP, SERVER_START, SERVER_STOP, KILL } = require('./utils/gateway');
+const { SIGNER_ADD, SIGNER_REMOVE, SIGNER_LIST } = require('./utils/signer');
+const { sendOverMq, sendOverRpc, QUEUE_TYPE } = require('./mq');
 const commandLineArgs               = require('command-line-args');
-const { read, create, del }         = require('./src/utils/wallet');
-const { listEncryptedWallets }      = require('./src/private-path');
+const { read, create, del }         = require('./utils/wallet');
+const { listEncryptedWallets }      = require('./private-path');
 const chalk                         = require('chalk');
 
 // Clean the screen before executing the CLI
