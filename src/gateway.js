@@ -52,7 +52,7 @@ let serverScript = './src/server.js';
       
       server = fork(serverScript, ['child'], { });
       server.on('close', () => {
-          console.warn(chalk.redBright(chalk.bold(`> Seascape Message Server`) + ` stopped!`));
+          console.warn(chalk.redBright(chalk.bold(`> Server`) + ` stopped!`));
 
           server = undefined;
       });
@@ -79,7 +79,7 @@ let serverScript = './src/server.js';
       signer = fork(signerScript, ['child'], { });
 
       signer.on('close', () => {
-        console.warn(chalk.redBright(chalk.bold(`> Seascape Message Signer`) + ` stopped!`));
+        console.warn(chalk.redBright(chalk.bold(`> Smartcontract Signer`) + ` stopped!`));
 
         signer = undefined;
       });

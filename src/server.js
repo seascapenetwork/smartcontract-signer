@@ -60,7 +60,7 @@ app.post('/sign-message', async (req, res) => {
 				message: content.message
 			})
 		} else {
-            console.log(chalk.green(`Seascape Message Signer add signal was sent to Gateway!`));
+            console.log(chalk.green(`Smartcontract Signer add signal was sent to Gateway!`));
 			return res.send({
 				signature: content.signature
 			});
@@ -77,5 +77,5 @@ app.post('/sign-message', async (req, res) => {
 });
 
 app.listen(port, async () => {
-	console.log(chalk.blueBright(chalk.bold(`> Seascape Message Server`) + ` runs on https://localhost:${port}!`));
+	console.log(chalk.blueBright(chalk.bold(`> Server`) + ` runs on https://localhost:${port}!`));
 });

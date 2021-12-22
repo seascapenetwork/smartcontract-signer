@@ -1,5 +1,5 @@
-# Seascape Message Signer
-A Nodejs app to verify Smartcontract interactions within the Seascape Ecosystem by Signing the Messages that user has to pass with itself.
+# Smartcontract Signer
+An app that will sign messages to verify in Smartcontracts using `ecrecover`.
 
 # Installation for Development
 

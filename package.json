@@ -1,5 +1,5 @@
 {
-  "name": "seascape-message-signer",
+  "name": "smartcontract-signer",
   "version": "1.0.0",
   "description": "More safeway to sign messages that will be verified in the Smartcontracts",
   "main": "src/gateway.js",
@@ -9,22 +9,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/blocklords/seascape-message-signer.git"
+    "url": "git+https://github.com/blocklords/smartcontract-signer.git"
   },
   "keywords": [
-    "seascape",
-    "crowns",
     "smartcontract",
     "verifier",
     "ecrecover",
-    "sign-message"
+    "sign"
   ],
   "author": "Medet Ahmetson <ahmetson@zoho.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/blocklords/seascape-message-signer/issues"
+    "url": "https://github.com/blocklords/smartcontract-signer/issues"
   },
-  "homepage": "https://github.com/blocklords/seascape-message-signer#readme",
+  "homepage": "https://github.com/blocklords/smartcontract-signer#readme",
   "dependencies": {
     "@ethersproject/contracts": "^5.0.10",
     "@ethersproject/providers": "^5.4.5",

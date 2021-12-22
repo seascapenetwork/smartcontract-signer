@@ -3,13 +3,9 @@
 /**
  * CLI is the Command Line Interface of the Blockchain Syncer.
  * Basically its the manager of Eventeum.
- * 
- * Features:
- * Multi-blockchain.
- * Register Contracts.
- * Add contract events to the Eventeum.
- * Listen to the contract events and redirect to supported Seascape Backend.
+ * @author Medet Ahmetson <admin@blocklords.io>
  */
+
 const { SIGNER_START, SIGNER_STOP, SERVER_START, SERVER_STOP, KILL } = require('./src/utils/gateway');
 const { SIGNER_ADD, SIGNER_REMOVE, SIGNER_LIST } = require('./src/utils/signer');
 const { sendOverMq, sendOverRpc, QUEUE_TYPE } = require('./src/mq');
@@ -76,7 +72,7 @@ const argv              = mainOptions._unknown || [];
 
         let res = await sendOverMq(QUEUE_TYPE.GATEWAY, {command: SERVER_START});
         if (res === true) {
-            console.log(chalk.green(`Seascape Message Signer starting signal was sent to Gateway!`));
+            console.log(chalk.green(`Smartcontract Signer starting signal was sent to Gateway!`));
         }
         
         exit();
@@ -85,7 +81,7 @@ const argv              = mainOptions._unknown || [];
 
         let res = await sendOverMq(QUEUE_TYPE.GATEWAY, {command: SERVER_STOP});
         if (res === true) {
-            console.log(chalk.green(`Seascape Message Signer stopping signal was sent to Gateway!`));
+            console.log(chalk.green(`Smartcontract Signer stopping signal was sent to Gateway!`));
         }
         
         exit();
@@ -94,7 +90,7 @@ const argv              = mainOptions._unknown || [];
 
         let res = await sendOverMq(QUEUE_TYPE.GATEWAY, {command: SIGNER_START});
         if (res === true) {
-            console.log(chalk.green(`Seascape Message Signer starting signal was sent to Gateway!`));
+            console.log(chalk.green(`Smartcontract Signer starting signal was sent to Gateway!`));
         }
         
         exit();
@@ -103,7 +99,7 @@ const argv              = mainOptions._unknown || [];
 
         let res = await sendOverMq(QUEUE_TYPE.GATEWAY, {command: SIGNER_STOP});
         if (res === true) {
-            console.log(chalk.green(`Seascape Message Signer stopping signal was sent to Gateway!`));
+            console.log(chalk.green(`Smartcontract Signer stopping signal was sent to Gateway!`));
         }
         
         exit();
@@ -122,7 +118,7 @@ const argv              = mainOptions._unknown || [];
             if (content.error) {
                 console.error(chalk.redBright(content.message));
             } else {
-                console.log(chalk.green(`Seascape Message Signer add signal was sent to Gateway!`));
+                console.log(chalk.green(`Smartcontract Signer add signal was sent to Gateway!`));
             }
 
             exit();
@@ -182,7 +178,7 @@ const argv              = mainOptions._unknown || [];
         }
 
         if (Object.keys(listOptions).length === 0) {
-            console.log(chalk.gray(chalk.bold(`DECRYPTED`) + ` list of the wallets loaded into the Seascape Message Signer`));
+            console.log(chalk.gray(chalk.bold(`DECRYPTED`) + ` list of the wallets loaded into the Smartcontract Signer`));
 
             let overRpcParams = {command: SIGNER_LIST};
             let res = await sendOverRpc(QUEUE_TYPE.SIGNER, overRpcParams, (content) => {
@@ -217,7 +213,7 @@ const argv              = mainOptions._unknown || [];
 
             exit();
         } else if (listOptions['unload']) {
-            console.log(chalk.gray(chalk.bold(`ENCRYPED`) + ` list of all wallets that are not in Seascape Message Signer`));
+            console.log(chalk.gray(chalk.bold(`ENCRYPED`) + ` list of all wallets that are not in Smartcontract Signer`));
 
             let encryptedWallets
             try {
