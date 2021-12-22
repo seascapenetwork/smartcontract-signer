@@ -1,12 +1,10 @@
-const fs = require("fs");
-
-const inquirer  = require("inquirer");
-const chalk     = require("chalk");
-const { privatePath } = require("./../private-path");
-const clui = require('clui');
-const Spinner = clui.Spinner;
-
-const { ethers } = require("ethers");
+const fs                = require("fs");
+const inquirer          = require("inquirer");
+const chalk             = require("chalk");
+const { privatePath }   = require("../private-path");
+const clui              = require('clui');
+const Spinner           = clui.Spinner;
+const { ethers }        = require("ethers");
 
 /**
  * Decrypt the Keystore wallet with the given password. If failed to decrypt, then return undefined.
@@ -151,7 +149,7 @@ const create = async () => {
     const { ANSWER } = await askConfirm();
 
     if (ANSWER !== 'yes' && ANSWER !== 'no') {
-        console.error(chalk.redBright(`Only 'yes' or 'no' is accepted`));
+        console.error(chalk.redBright(`Only 'yes' or 'no' expected`));
         process.exit(2);
     }
 
@@ -215,6 +213,7 @@ const del = async () => {
 module.exports = {
     create,
     read,
+    del,
     decryptWallet,
     readWallet
 }
