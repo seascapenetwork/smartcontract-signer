@@ -206,9 +206,34 @@ const argv              = mainOptions._unknown || [];
                 exit(0, `Failed to fetch the encrypted wallets list`);
             }
 
-            console.log(chalk.bold(`Found ${encryptedWallets.length} wallets!`))
-            for (var i in encryptedWallets) {
-                console.log(` ${parseInt(i) + 1}. ${encryptedWallets[i]}`);
+            let overRpcParams = {command: SIGNER_LIST};
+            let res = await sendOverRpc(QUEUE_TYPE.SIGNER, overRpcParams, (content) => {
+                console.log(chalk.green(`Found ${content.length} loaded wallets!`));
+
+                for (var i in content) {
+                    let wallet = content[i];
+                    console.log(` ${parseInt(i) + 1}. ` + chalk.blueBright(wallet.address) + ` in ${wallet.path}.json`);
+                }
+
+                console.log(chalk.bold(`Unloaded wallets:`))
+                for (var i in encryptedWallets) {
+                    let loaded = false;
+                    for (var wallet of content) {
+                        if (encryptedWallets[i].toLowerCase() == wallet.path.toLowerCase() + '.json') {
+                            loaded = true;
+                            break;
+                        }
+                    }
+
+                    if (!loaded) {
+                        console.log(` ${parseInt(i) + 1}. ${encryptedWallets[i]}`);
+                    }
+                }
+
+                exit();
+            });
+            if (res !== true) {
+                console.error(chalk.redBright(res));
             }
 
             exit();
