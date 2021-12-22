@@ -5,8 +5,8 @@
  */
 
 const chalk 		= require('chalk');
-const { SIGN, validateParams, getMessage } = require('./util/signer');
-const { sendOverRpc, QUEUE_TYPE } = require('./src/mq');
+const { SIGN, validateParams, getMessage } = require('./utils/signer');
+const { sendOverRpc, QUEUE_TYPE } = require('./mq');
 
 // or server to listen to sign up
 const express = require('express');
@@ -27,7 +27,7 @@ const port = 3000;
  */
 app.post('/sign-message', async (req, res) => {
 	if (!req.body.address || req.body.address.length === 0) {
-		res.
+		return res.status(404).send({signature: "", error: "EMPTY", message: "No parameters were received"});
 	}
 
 	// ----------------------------------------------------------------
@@ -51,7 +51,7 @@ app.post('/sign-message', async (req, res) => {
 	}
 
 	let overRpcParams = {command: SIGN, address: req.body.address, message: message};
-    let res = await sendOverRpc(QUEUE_TYPE.SIGNER, overRpcParams, (content) => {
+    let resMq = await sendOverRpc(QUEUE_TYPE.SIGNER, overRpcParams, (content) => {
     	if (content.error) {
         	console.error(chalk.redBright(content.message));
 			return res.status(503).send({
@@ -66,12 +66,12 @@ app.post('/sign-message', async (req, res) => {
 			});
         }
     });
-    if (res !== true) {
-        console.error(chalk.redBright(res));
+    if (resMq !== true) {
+        console.error(chalk.redBright(resMq));
 		return res.status(503).send({
 			signature: "",
 			error: "NOT_ABLE_SIGN",
-			message: res
+			message: resMq.toString()
 		});
     }
 });
