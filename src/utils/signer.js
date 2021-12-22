@@ -125,9 +125,9 @@ let validateParams = (params) => {
  * Hashes and generates the message based on the parameters
  */
 let getMessage = async function (params) {
-    let str;
+    let str = "0x";
     for (var param of params) {
-        if (str.length === 0) {
+        if (param.length === 0) {
             str = abiEncode(param);
         } else {
             str += abiEncode(param).substr(2);
@@ -142,9 +142,11 @@ let getSignature = async (message, wallet) => {
     let arr = ethers.utils.arrayify(message);
  
     try {
-        return await wallet.sign(arr);
+        return await wallet.signMessage(arr);
     } catch (error) {
-        console.error(`Error during signing the message by wallet ${wallet.address}`);
+        console.error(error);
+        console.error(message);
+        console.error(`Error during signing the message by wallet '${wallet.address}'`);
         return "";
     }
 }
