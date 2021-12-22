@@ -1,6 +1,6 @@
 
 node_modules
-Dockerfile
+docker/*
 .git
 
 # Ignore emacs buffer files

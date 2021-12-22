@@ -1,13 +1,13 @@
 version: "3.2"
 
 services:
-  message-signer:
+  signer:
     build:
-      context: ./
-    container_name: "message-signer"
+      context: ../
+    container_name: "signer"
     volumes:
       - type: bind
-        source: ./
+        source: ../
         target: /home/node/app
       - /home/node/app/node_modules
     networks:
