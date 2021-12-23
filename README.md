@@ -1,5 +1,24 @@
-# Smartcontract Signer
-An app that will sign messages to verify in Smartcontracts using `ecrecover`.
+The **Smartcontract Signer** is the application that
+signs messages for Ethereum compatible blockchains.
+
+The signed message will generate a signature of the data, that could be verified in smartcontracts using <ins>[`ecrecover`](https://docs.soliditylang.org/en/v0.8.11/units-and-global-variables.html?highlight=ecrecover)</ins> function.
+
+> #### The Unique feature of Smartcontract Signer!
+> This application keeps privatekeys as the encrypted files.
+> While hiding what are the privatekeys, the application
+> exposes only one port to interact with outer world.
+
+Thus, it's recommended to set up **Smartcontract Signer** in an isolated server that has no access to the rest of the internet. 
+
+While application is not connected to the rest of the world, its recommended to connect to to the local network, where **Smartcontract Signer** exposes only one port. 
+
+This way, other applications that interact with the clients
+could send a data to sign to the **Smartcontract Signer** through the open port.
+
+
+# Production usage
+
+
 
 # Installation for Development
 
@@ -28,8 +47,8 @@ Run the code:
 This will prompt the password for each account it finds.
 
 # How to sign
- * 	On that endpoint it receives the following information:
- * 
+On that endpoint it receives the following information:
+  
  *  signerAddress: the wallet that should sign the message.
  *  params: [
  * 		{
