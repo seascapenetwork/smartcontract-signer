@@ -11,6 +11,7 @@ services:
       - type: bind 
         source: ../private
         target: /home/node/app/private
+      - /home/node/app/node_modules
     networks:
       - net
     env_file:
