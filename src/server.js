@@ -12,7 +12,7 @@ const { sendOverRpc, QUEUE_TYPE } = require('./mq');
 const express = require('express');
 const app = express();
 app.use(express.json()); // built-in middleware for express
-const port = 3000;
+const port = process.env.SERVER_PORT || 3000;
 
 /**
  * @description Signs the incoming from outword messages to be signed by the 
