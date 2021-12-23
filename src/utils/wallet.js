@@ -1,7 +1,6 @@
-const fs                = require("fs");
 const inquirer          = require("inquirer");
 const chalk             = require("chalk");
-const { privatePath }   = require("../private-path");
+const { readWallet, deleteWallet, createWallet }   = require("../private-path");
 const clui              = require('clui');
 const Spinner           = clui.Spinner;
 const { ethers }        = require("ethers");
@@ -36,61 +35,6 @@ let decryptWallet = async (json, password, spinner) => {
     return wallet;
 };
 
-/**
- * Read Encrypted Wallet and return the JSON String.
- * @param {string} path 
- * @returns Promise => json string
- * @warning exits on error.
- */
-let readWallet = (file) => {
-    let path = privatePath(file);
-
-    return new Promise((resolve, _reject) => {
-        fs.readFile(path, (error, data) => {
-
-            if (error) {
-                console.log(`Error: `, chalk.red(error));
-                process.exit(1);
-            } else {
-                console.log(data);
-                resolve(data);
-            }
-        });
-    })
-}
-
-/**
- * Deletes the Encrypted JSON file from the directory
- * @param {String} file 
- * @returns TRUE on success
- */
-let deleteWallet = (file) => {
-    let path = privatePath(file);
-
-    return new Promise((resolve, _reject) => {
-        fs.unlink(path, (error) => {
-            if (error) {
-                console.log(chalk.red(error));
-                process.exit(1);
-            } else {
-                resolve(true);
-            }
-        });
-    })
-}
-
-
-/**
- * Writes the Encrypted JSON file to the directory
- * @param {String} file name
- * @param {ethers.Wallet} file name
- * @returns TRUE on success
- */
-let createWallet = async (file, wallet) => {
-    let path = privatePath(file);
-
-    fs.writeFileSync(path, wallet);
-}
 
 const askCreation = () => {
     const questions = [
@@ -214,6 +158,5 @@ module.exports = {
     create,
     read,
     del,
-    decryptWallet,
-    readWallet
+    decryptWallet
 }

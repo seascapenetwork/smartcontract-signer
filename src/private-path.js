@@ -143,7 +143,7 @@ module.exports.list = async () => {
 
 /**
  * Read Encrypted Wallet and return the JSON String.
- * @param {string} path 
+ * @param {string} file name
  * @returns Promise => json string
  * @warning exits on error.
  */

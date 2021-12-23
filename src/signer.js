@@ -9,6 +9,7 @@
 const chalk 		      = require("chalk");
 const { isSupportedCommand, SIGNER_ADD, SIGNER_REMOVE, SIGNER_LIST, SIGN, getSignature } = require('./utils/signer');
 const walletUtil = require('./utils/wallet');
+const pathUtil = require('./private-path');
 let mq = require('./mq');
 
 // List of the decrypted wallets.
@@ -100,7 +101,7 @@ let onMsg = async (content, replyTo, correlationId) => {
 			return false;
 		}
 
-		let json = await walletUtil.readWallet(content.path);
+		let json = await pathUtil.readWallet(content.path);
 		let wallet = await walletUtil.decryptWallet(json, content.passphrase);
 
 		wallets.push({
