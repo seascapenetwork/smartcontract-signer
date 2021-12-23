@@ -25,7 +25,7 @@ services:
     restart: always
     volumes:
       - type: bind
-        source: ./mq/rabbitmq.conf
+        source: ../mq/rabbitmq.conf
         target: /etc/rabbitmq/rabbitmq.conf
       # - type: bind
         # source: ./mq/advanced.config
