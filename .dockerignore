@@ -1,7 +1,10 @@
 
 node_modules
-docker/*
+docker-build/*
+docker-dev/*
+docker-prod/*
 .git
+README.md
 
 # Ignore emacs buffer files
 **/*~

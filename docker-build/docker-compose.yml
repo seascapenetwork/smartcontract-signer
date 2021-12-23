@@ -1,0 +1,21 @@
+version: "3.2"
+
+services:
+  signer:
+    image: blocklords/smartcontract-signer:1.0.0
+    build:
+      context: ../
+      dockerfile: ./docker-build/Dockerfile
+    container_name: "signer"
+    volumes:
+      - type: bind 
+        source: ../private
+        target: /home/node/app/private
+    networks:
+      - net
+    env_file:
+      - ../.env
+    ports:
+      - "3000:3000"
+networks:
+  net:
