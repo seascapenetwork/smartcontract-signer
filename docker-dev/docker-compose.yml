@@ -4,7 +4,7 @@ services:
   signer:
     build:
       context: ../
-      dockerfile: ./docker/Dockerfile
+      dockerfile: ./docker-dev/Dockerfile
     container_name: "signer"
     volumes:
       - type: bind
@@ -18,7 +18,7 @@ services:
     env_file:
       - ../.env
     ports:
-      - "3000:3000"
+      - "3090:3000"
     links:
       - mq
     depends_on:

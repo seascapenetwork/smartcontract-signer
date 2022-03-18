@@ -148,7 +148,7 @@ module.exports.list = async () => {
  * @warning exits on error.
  */
 module.exports.readWallet = (file) => {
-    let path = getWalletPath(file);
+    let path = privatePath(file);
 
     return new Promise((resolve, _reject) => {
         fs.readFile(path, (error, data) => {
@@ -168,7 +168,7 @@ module.exports.readWallet = (file) => {
  * @returns TRUE on success
  */
 module.exports.deleteWallet = (file) => {
-    let path = getWalletPath(file);
+    let path = privatePath(file);
 
     return new Promise((resolve, _reject) => {
         fs.unlink(path, (error) => {
@@ -190,7 +190,7 @@ module.exports.deleteWallet = (file) => {
  * @returns TRUE on success
  */
  module.exports.createWallet = async (file, wallet) => {
-    let path = getWalletPath(file);
+    let path = privatePath(file);
 
     fs.writeFileSync(path, wallet);
 }
