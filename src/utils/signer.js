@@ -143,7 +143,6 @@ let getEncodeMessage = async function (params) {
  */
 let getMessage = async function (params) {
     let str = await getEncodeMessage(params);
-    console.log('str:',str);
     return ethers.utils.keccak256(str);
 };
  
