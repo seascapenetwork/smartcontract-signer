@@ -87,8 +87,8 @@ app.get('/sign-quality', async function (req, res) {
 	let quality = parseInt(req.query.quality);
 	let owner = req.query.owner;
 	let amount = req.query.amountWei;
-	let mintedTime = parseInt(req.query.mintedTime);
-	let nonce = parseInt(req.query.nonce);
+	let mintedTime = parseInt(req.query.mintedTime.toString());
+	let nonce = parseInt(req.query.nonce.toString());
 
 	let param = {
 		address: privateAddress,
