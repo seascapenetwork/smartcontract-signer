@@ -32,6 +32,8 @@
     "clear": "^0.1.0",
     "clui": "^0.3.6",
     "command-line-args": "^5.2.0",
+    "eth-sig-util": "^3.0.1",
+    "ethereumjs-util": "^7.1.4",
     "ethers": "^5.4.7",
     "express": "^4.17.1",
     "figlet": "^1.5.2",

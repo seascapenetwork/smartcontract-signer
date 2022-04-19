@@ -1,5 +1,4 @@
 version: "3.2"
-
 services:
   signer:
     build:
@@ -14,7 +13,7 @@ services:
     networks:
       - net
     entrypoint: sh
-    command: '-c "sleep 1d"'
+    command: '-c "node src/gateway.js"'
     env_file:
       - ../.env
     ports:

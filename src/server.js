@@ -12,6 +12,7 @@ const express = require('express');
 const app = express();
 app.use(express.json()); // built-in middleware for express
 const port = process.env.SERVER_PORT || 3000;
+const web3 = require('./utils/web3');
 
 /**
  * @description Signs the incoming from outword messages to be signed by the 
@@ -318,6 +319,92 @@ app.get('/sign-nft-staking-bonus', async function (req, res) {
 			message: resMq.toString()
 		});
 	}
+});
+app.get('/single-staking-complete', async function (req, res) {
+	let privateAddress = req.query.address;
+	let sessionId = parseInt(req.query.sessionId);
+	let completedNum = parseInt(req.query.completedNum);
+	let owner = req.query.owner;
+
+	let param = {
+		address: privateAddress,
+		params: [
+			{
+				type: 'UINT256',
+				value: sessionId
+			},
+			{
+				type: 'UINT8',
+				value: completedNum
+			},
+			{
+				type: 'ADDRESS',
+				value: owner
+			}
+
+		]
+	};
+
+	let validation = validateParams(param.params);
+	if (validation !== true) {
+		validation.signature = "";
+		return res.status(404).send(validation);
+	}
+
+	let message;
+	try {
+		message = await getMessage(param.params);
+	} catch (error) {
+		console.error(error);
+		return res.status(500).send({
+			signature: "",
+			error: "INVALID_MESSAGE",
+			message: "Could not generate the message to sign based on the parameters"
+		});
+	}
+
+	let overRpcParams = {command: SIGN, address: privateAddress, message: message};
+
+	let resMq = await sendOverRpc(QUEUE_TYPE.SIGNER, overRpcParams, content => {
+		if (content.error) {
+			console.error(chalk.redBright(content.message));
+			return res.status(503).send({
+				signature: "",
+				error: content.error,
+				message: content.message
+			})
+		} else {
+			console.log(chalk.green(`Server received the signature from the Signer!`));
+			let dot = signDot(content.signature);
+			return res.send({
+				r: dot.r,
+				s: dot.s,
+				v: dot.v
+			});
+		}
+	});
+
+	if (resMq !== true) {
+		console.error(chalk.redBright(resMq));
+		return res.status(503).send({
+			signature: "",
+			error: "NOT_ABLE_SIGN",
+			message: resMq.toString()
+		});
+	}
+});
+
+/**
+ * url /staking-user-signed?owner=0x2325Ab5419fb45608EC34C7329ED6882050F67C4&sign=0xf55e3e2f77244e0428660f145cee54f039c64eda9fccd06b15c4da13944cacb47f89b841ac1bc8a81681b654535aacfb9d6bcc20a6ac499e81f4ca2541b022dd1b
+ */
+app.get('/staking-user-signed', async function (req, res) {
+	let sign = req.query.sign;
+	let owner = req.query.owner;
+	let recover = await web3.userEcRecover(sign);
+
+	return res.json({
+		'verify': owner.toLowerCase() === recover.address.toLowerCase()
+	})
 });
 
 /**
