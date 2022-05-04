@@ -223,9 +223,7 @@ app.get('/sign-nft-scape-points', async function (req, res) {
 			})
 		} else {
 			console.log(chalk.green(`Server received the signature from the Signer!`));
-			return res.send({
-				signature: content.signature
-			});
+			return res.send(content.signature);
 		}
 	});
 
