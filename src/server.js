@@ -237,6 +237,82 @@ app.get('/sign-nft-scape-points', async function (req, res) {
 	}
 });
 
+
+/**
+ * url sign-nft-scape-points-v2?nftId=3&scapePoints=605&owner=0x65456fe4b7C4D32CfeEC9A585902F5f89db19E4c&address=0x356B35270eA4cf3Da0FEa1fF743d2b9b908FDf15
+ */
+app.get('/sign-nft-scape-points-v2', async function (req, res) {
+	let privateAddress = req.query.address;
+	let nftId = parseInt(req.query.nftId);
+	let scapePoints = parseInt(req.query.scapePoints);
+	let owner = req.query.owner;
+
+	let param = {
+		address: privateAddress,
+		params: [
+			{
+				type: 'UINT256',
+				value: nftId
+			},
+			{
+				type: 'UINT256',
+				value: scapePoints
+			},
+			{
+				type: 'ADDRESS',
+				value: owner
+			},
+		]
+	};
+
+
+	// ----------------------------------------------------------------
+	// incoming parameters
+	// ----------------------------------------------------------------
+	let validation = validateParams(param.params);
+	if (validation !== true) {
+		validation.signature = "";
+		return res.status(404).send(validation);
+	}
+
+	let message;
+	try {
+		message = await getMessage(param.params);
+	} catch (error) {
+		console.error(error);
+		return res.status(500).send({
+			signature: "",
+			error: "INVALID_MESSAGE",
+			message: "Could not generate the message to sign based on the parameters"
+		});
+	}
+
+	let overRpcParams = {command: SIGN, address: privateAddress, message: message};
+
+	let resMq = await sendOverRpc(QUEUE_TYPE.SIGNER, overRpcParams, content => {
+		if (content.error) {
+			console.error(chalk.redBright(content.message));
+			return res.status(503).send({
+				signature: "",
+				error: content.error,
+				message: content.message
+			})
+		} else {
+			console.log(chalk.green(`Server received the signature from the Signer!`));
+			return res.send(content.signature);
+		}
+	});
+
+	if (resMq !== true) {
+		console.error(chalk.redBright(resMq));
+		return res.status(503).send({
+			signature: "",
+			error: "NOT_ABLE_SIGN",
+			message: resMq.toString()
+		});
+	}
+});
+
 /**
  * url /sign-nft-staking-bonus?bonus=300&nftId1=101&nftId2=202&nftId3=303&address=0x356B35270eA4cf3Da0FEa1fF743d2b9b908FDf15
  */
