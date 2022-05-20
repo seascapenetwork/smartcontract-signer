@@ -319,10 +319,15 @@ app.get('/staking-nfts', async function (req, res) {
 	let scapePoints2 = parseInt(req.query.scapePoints2);
 	let nftId3 = parseInt(req.query.nftId3);
 	let scapePoints3 = parseInt(req.query.scapePoints3);
+	let sessionId = parseInt(req.query.sessionId);
 
 	let param = {
 		address: privateAddress,
 		params: [
+			{
+				type: 'UINT256',
+				value: sessionId
+			},
 			{
 				type: 'UINT256',
 				value: nftId1
