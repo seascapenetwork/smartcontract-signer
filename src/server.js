@@ -355,7 +355,7 @@ app.get('/staking-nfts', async function (req, res) {
 				value: scapePoints3
 			},
 			{
-				type: 'nonce',
+				type: 'UINT256',
 				value: nonce
 			},
 			{
