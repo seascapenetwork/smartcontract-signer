@@ -320,6 +320,8 @@ app.get('/staking-nfts', async function (req, res) {
 	let nftId3 = parseInt(req.query.nftId3);
 	let scapePoints3 = parseInt(req.query.scapePoints3);
 	let sessionId = parseInt(req.query.sessionId);
+	let nonce = parseInt(req.query.nonce);
+	let owner = req.query.owner;
 
 	let param = {
 		address: privateAddress,
@@ -351,6 +353,14 @@ app.get('/staking-nfts', async function (req, res) {
 			{
 				type: 'UINT256',
 				value: scapePoints3
+			},
+			{
+				type: 'nonce',
+				value: nonce
+			},
+			{
+				type: 'ADDRESS',
+				value: owner
 			},
 		]
 	};
