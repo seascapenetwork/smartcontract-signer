@@ -690,6 +690,7 @@ app.get('/sign-scape-forum-quality', async function (req, res) {
 	let quality = parseInt(req.query.quality);
 	let imgId = parseInt(req.query.imgId);
 	let stakedInt = req.query.stakedInt;
+	let combo = parseInt(req.query.combo) > 0;
 
 	let param = {
 		address: privateAddress,
@@ -717,6 +718,10 @@ app.get('/sign-scape-forum-quality', async function (req, res) {
 			{
 				type: 'ETHER',
 				value: stakedInt
+			},
+			{
+				type: 'BOOL',
+				value: combo
 			},
 			{
 				type: 'UINT256',
@@ -760,9 +765,7 @@ app.get('/sign-scape-forum-quality', async function (req, res) {
 			})
 		} else {
 			console.log(chalk.green(`Server received the signature from the Signer!`));
-			return res.send({
-				signature: content.signature
-			});
+			return res.send(content.signature);
 		}
 	});
 
