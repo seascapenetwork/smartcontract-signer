@@ -20,6 +20,7 @@ let isSupportedCommand = (command) => {
 let types = [
     "UINT",
     "UINT8",
+    "BOOL",
     "UINT256",
     "ADDRESS",
     "BYTES32",
