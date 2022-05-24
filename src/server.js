@@ -690,7 +690,7 @@ app.get('/sign-scape-forum-quality', async function (req, res) {
 	let quality = parseInt(req.query.quality);
 	let imgId = parseInt(req.query.imgId);
 	let stakedInt = req.query.stakedInt;
-	let combo = parseInt(req.query.combo) > 0;
+	let combo = parseInt(req.query.combo);
 
 	let param = {
 		address: privateAddress,
@@ -720,7 +720,7 @@ app.get('/sign-scape-forum-quality', async function (req, res) {
 				value: stakedInt
 			},
 			{
-				type: 'BOOL',
+				type: 'UINT8',
 				value: combo
 			},
 			{
