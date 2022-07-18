@@ -585,13 +585,21 @@ app.get('/single-staking-complete', async function (req, res) {
  * url /staking-user-signed?owner=0x2325Ab5419fb45608EC34C7329ED6882050F67C4&sign=0xf55e3e2f77244e0428660f145cee54f039c64eda9fccd06b15c4da13944cacb47f89b841ac1bc8a81681b654535aacfb9d6bcc20a6ac499e81f4ca2541b022dd1b
  */
 app.get('/staking-user-signed', async function (req, res) {
-	let sign = req.query.sign;
-	let owner = req.query.owner;
-	let recover = await web3.userEcRecover(sign);
+	try {
+		let sign = req.query.sign;
+		let owner = req.query.owner;
+		let recover = await web3.userEcRecover(sign);
 
-	return res.json({
-		'verify': owner.toLowerCase() === recover.address.toLowerCase()
-	})
+		return res.json({
+			'verify': owner.toLowerCase() === recover.address.toLowerCase()
+		})
+	} catch (error) {
+		return res.status(500).send({
+			signature: "",
+			error: "INVALID_SIGN",
+			message: ""
+		});
+	}
 });
 
 /**
