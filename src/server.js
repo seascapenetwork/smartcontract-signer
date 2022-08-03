@@ -15,15 +15,15 @@ const port = process.env.SERVER_PORT || 3000;
 const web3 = require('./utils/web3');
 
 /**
- * @description Signs the incoming from outword messages to be signed by the 
+ * @description Signs the incoming from outword messages to be signed by the
  * signer.js
- * 
+ *
  * parameters it accepts:
  * req.address - the wallet address that should sign the message
  * req.params - the list of parameters to sign to
- * 
+ *
  * The req.params is the array of the objects. Objects contain "type" and "value" parameters.
- * 
+ *
  * Type could be UINT8, UINT256, INT8, INT256, ADDRESS.
  */
 app.post('/sign-message', async (req, res) => {
@@ -53,7 +53,7 @@ app.post('/sign-message', async (req, res) => {
 	}
 
 	let overRpcParams = {command: SIGN, address: req.body.address, message: message};
-	
+
     let resMq = await sendOverRpc(QUEUE_TYPE.SIGNER, overRpcParams, (content) => {
     	if (content.error) {
         	console.error(chalk.redBright(content.message));
@@ -151,9 +151,7 @@ app.get('/sign-quality', async function (req, res) {
 			})
 		} else {
 			console.log(chalk.green(`Server received the signature from the Signer!`));
-			return res.send({
-				signature: content.signature
-			});
+			return res.send(content.signature);
 		}
 	});
 
