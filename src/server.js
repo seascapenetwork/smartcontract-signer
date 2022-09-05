@@ -825,8 +825,6 @@ app.get('/sign-zombie-farm-nft', async (req, res) => {
 	let nftAddress = req.query.nftAddress;
 	let nonce = parseInt(req.query.nonce.toString());
 
-	console.log('-------------------sign-zombie-farm-nft-------------------------')
-	console.log(privateAddress,weight,nftId,nftAddress,nonce);
 	let param = {
 		address: privateAddress,
 		params: [
@@ -875,7 +873,7 @@ app.get('/sign-zombie-farm-nft', async (req, res) => {
 		});
 	}
 
-	let overRpcParams = {command: SIGN, address: req.body.address, message: message};
+	let overRpcParams = {command: SIGN, address: privateAddress, message: message};
 
 	let resMq = await sendOverRpc(QUEUE_TYPE.SIGNER, overRpcParams, content => {
 		if (content.error) {
