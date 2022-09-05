@@ -825,6 +825,8 @@ app.get('/sign-zombie-farm-nft', async (req, res) => {
 	let nftAddress = req.query.nftAddress;
 	let nonce = parseInt(req.query.nonce.toString());
 
+	console.log('-------------------sign-zombie-farm-nft-------------------------')
+	console.log(privateAddress,weight,nftId,nftAddress,nonce);
 	let param = {
 		address: privateAddress,
 		params: [
