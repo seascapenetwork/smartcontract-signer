@@ -798,9 +798,7 @@ app.get('/sign-zombie-farm-nft-token', async function (req, res) {
 					"value": amount
 				}
 			]).then(encode => {
-				return res.send({
-					signature: encode
-				});
+				return res.send(encode);
 			});
 		}
 	});
@@ -910,9 +908,7 @@ app.get('/sign-zombie-farm-nft', async (req, res) => {
 					"value": weight
 				}
 			]).then(encode => {
-				return res.send({
-					signature: encode
-				});
+				return res.send(encode);
 			});
 		}
 	});
