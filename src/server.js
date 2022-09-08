@@ -821,7 +821,7 @@ app.get('/sign-zombie-farm-nft', async (req, res) => {
 	let weight = parseInt(req.query.weight);
 	let nftId = parseInt(req.query.nftId);
 	let nftAddress = req.query.nftAddress;
-	let nonce = parseInt(req.query.nonce.toString());
+	// let nonce = parseInt(req.query.nonce.toString());
 
 	let param = {
 		address: privateAddress,
@@ -838,10 +838,10 @@ app.get('/sign-zombie-farm-nft', async (req, res) => {
 				type: "ADDRESS",
 				value: nftAddress
 			},
-			{
-				type: "UINT",
-				value: nonce
-			},
+			// {
+			// 	type: "UINT",
+			// 	value: nonce
+			// },
 
 		]
 	};
@@ -933,6 +933,7 @@ app.get('/single-zombie', async function (req, res) {
 	let slotId = parseInt(req.query.slotId);
 	let challenge = req.query.challenge;
 	let owner = req.query.owner;
+	let nonce = parseInt(req.query.nonce.toString());
 
 	let param = {
 		address: privateAddress,
@@ -952,6 +953,10 @@ app.get('/single-zombie', async function (req, res) {
 			{
 				type: 'ADDRESS',
 				value: challenge
+			},
+			{
+				type: "UINT256",
+				value: nonce
 			},
 			{
 				type: 'ADDRESS',
